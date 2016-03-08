@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Avaliações
+title: AvaliaÃ§Ãµes
 permalink: /avaliacoes/
 ---
 
@@ -12,6 +12,6 @@ permalink: /avaliacoes/
 
 - Exame Final: 12 Julho 2016
 
-Aprovação sem exame final: média 7.
+AprovaÃ§Ã£o sem exame final: mÃ©dia 7.
 
-Para os que não alcançarem média 7 ao fim do projeto, é necessário pelo menos 75(pc) de frequência para realização do exame final.
+Para os que nÃ£o alcanÃ§arem mÃ©dia 7 ao fim do projeto, Ã© necessÃ¡rio pelo menos 75(pc) de frequÃªncia para realizaÃ§Ã£o do exame final.

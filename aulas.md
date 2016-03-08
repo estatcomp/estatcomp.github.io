@@ -4,7 +4,7 @@ title: Aulas
 permalink: /aulas/
 ---
 
-As aulas dadas no curso encontram-se disponÃ­veis abaixo:
+As aulas dadas no curso encontram-se disponÃƒÂ­veis abaixo:
 
-1. Aula 1 - [Introdução ao R](slides/parte01.html)
-2. Aula 2 - [Revisão de Probabilidade e Estatística](siles/parte02.html)
+1. Aula 1 - [IntroduÃ§Ã£o ao R](slides/parte01.html)
+2. Aula 2 - [RevisÃ£o de Probabilidade e EstatÃ­stica](siles/parte02.html)
