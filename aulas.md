@@ -7,4 +7,4 @@ permalink: /aulas/
 As aulas dadas no curso encontram-se disponíveis abaixo:
 
 1. Aula 1 - Introdução ao R
-2. Aula 2...
+2. Aula 2 - Revisão de Probabilidade e Estatística
