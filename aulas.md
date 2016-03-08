@@ -6,5 +6,5 @@ permalink: /aulas/
 
 As aulas dadas no curso encontram-se dispon√≠veis abaixo:
 
-1. Aula 1 - Introdu√ß√£o ao R
-2. Aula 2 - Revis√£o de Probabilidade e Estat√≠stica
+1. Aula 1 - [IntroduÁ„o ao R](slides/parte01.html)
+2. Aula 2 - [Revis„o de Probabilidade e EstatÌstica](siles/parte02.html)
