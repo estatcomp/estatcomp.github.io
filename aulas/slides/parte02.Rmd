@@ -1,0 +1,97 @@
+---
+title: "Revisão de Probabilidade e Estatística"
+author: "Benilton Carvalho"
+output: slidy_presentation
+---
+
+## Variáveis Aleatórias e Probabilidade
+
+- A função de distribuição acumulada da v.a. $X$ é $F_X$, definida por:
+$$F_X(x) = P(X \leq x), x \in R$$
+
+- Função não-decrescente;
+- Contínua à direita;
+- $\mbox{lim}_{x \rightarrow -\infty} F_X(x) = 0$
+- $\mbox{lim}_{x \rightarrow \infty} F_X(x) = 1$
+- Se $X$ é discreta, então
+$$ F_X(x) = P(X \leq x) = \sum_{k \leq x} p_X(x)$$
+
+## Esperança, Variância e Momentos
+
+- $r$-ésimo momento: $$ E(X^r) = \int_{-\infty}^{\infty} x^r f(x) dx $$
+- Esperança de uma função: $$ E[g(X)] = \int_{-\infty}^{\infty} g(x) f(x) dx $$
+
+## Esperança, Variância e Momentos
+
+- Variância: $$ V(X) = \sigma_X^2 = E[(X-\mu)^2] $$
+- Covariância: $$ Cov(X, Y) = E[(X-\mu_X)(Y - \mu_Y)]$$
+- Correlação: $$ \rho(X,Y) = \frac{Cov(X,Y)}{\sqrt{\sigma_X^2 \sigma_Y^2}}$$
+
+## Probabilidade Condicional e Independência
+
+- Probabilidade Condicional: $$ P(A|B) = \frac{P(AB)}{P(B)} $$
+- Probabilidade Conjunta: $$P(AB) = P(A|B)P(B)$$
+- $X$ e $Y$ são independentes se e somente se: $$f_{X,Y})(x,y) = f_X(x) f_Y(y)$$
+
+## Propriedades da Esperança e Variância
+
+- $E(aX + b) = aE(X)+b$
+- $E(X+Y) = E(X)+E(Y)$
+- Se $X$ e $Y$ são independentes: $E(XY)=E(X)E(Y)$
+- $V(b)=0$
+- $V(aX+b) = a^2 V(X)$
+- $V(X+Y) = V(X) + V(Y) + 2Cov(X,Y)$
+- $E(X) = E[E(X|Y)]$
+- $V(X) = V[E(X|Y)] + E[V(X|Y)]$
+
+## Algumas Distribuições Discretas
+
+- Bernoulli
+- Binomial
+- Multinomial
+- Geométrica
+- Binomial Negativa
+- Poisson
+
+## Algumas Distribuições Contínuas
+
+- Normal
+- Gama
+- Exponencial
+- Qui-quadrada
+- $t$
+- Beta
+- Uniforme
+- Log-normal
+
+## Normal Bivariada
+
+$$ f(x, y) = \frac{1}{2\pi \sigma_X \sigma_Y \sqrt{1-\rho^2}} \mbox{exp}\left\{ -\frac{1}{2(1-\rho^2)} \left[ \left( \frac{x-\mu_X}{\sigma_X}\right)^2 -2\rho \left( \frac{x-\mu_X}{\sigma_X}\right) \left( \frac{y-\mu_Y}{\sigma_Y}\right) + \left( \frac{y-\mu_Y}{\sigma_Y}\right)^2 \right]\right\} $$
+
+- Distribuições marginais de $X$ e $Y$ são normais;
+- $Y|X=x \sim \mbox{Normal}\left(\mu_Y + \rho \sigma_Y/\sigma_X (x-\mu_X), \sigma_Y^2 (1-\rho^2) \right)$
+- $X$ e $Y$ são independentes se e somente se $\rho=0$
+
+## Propriedades Assintóticas
+
+Sejam: $X_1, \dots, X_n$  uma amostra aleatória e $E |X_1| = \mu < \infty$. Definindo $\bar{X}_n = \frac{1}{n} \sum_{i=1}^n X_i$, então:
+
+Lei Fraca dos Grandes Números: se $X_i$ são iid, então $\bar{X}_n$ converge em probabilidade para $\mu$.
+$$ \mbox{lim}_{n \rightarrow \infty} P(| \bar{X}_n - \mu | < \epsilon) = 1 $$
+
+Lei Forte dos Grandes Números: se $X_i$ são independentes 2-a-2, então $\bar{X}_n$ converge em quase certamente para $\mu$.
+$$ P( \mbox{lim}_{n \rightarrow \infty} | \bar{X}_n - \mu | < \epsilon) = 1 $$
+
+Teorema do Limite Central: se $0 < V(X_i) = \sigma < \infty$, então:
+$$ Z_n = \frac{\bar{X}_n - \mu}{\sigma / \sqrt{n}} \sim \mbox{Normal} \left(0, 1\right) $$
+
+## Medidas de Acurácia e Precisão
+
+- Uma estatística $\hat{\theta}_n$ é um estimador **não-viciado** de $\theta$ se $E(\hat{\theta}_n) = \theta$.
+- Uma estatística $\hat{\theta}_n$ é um estimador **assintoticamente não-viciado** de $\theta$ se $\mbox{lim}_{n \rightarrow \infty} E(\hat{\theta}_n) = \theta$.
+- $\mbox{Vício}(\hat{\theta}) = E(\hat{\theta}) - \theta$.
+- Erro Quadrado Médio: $MSE = E[(\hat{\theta} - \theta)^2] = V(\hat{\theta}) + \mbox{Vício}^2(\hat{\theta})$
+
+## Referências
+
+Capítulos 1 e 2 do livro Statistical Computing with R (Maria Rizzo, CRC Press).

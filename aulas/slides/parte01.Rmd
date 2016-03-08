@@ -1,0 +1,185 @@
+---
+title: "Introdução ao R"
+author: "Benilton Carvalho"
+output:
+  ioslides_presentation:
+         widescreen: true
+---
+
+## O Ambiente R
+
+O `R` pode ser visto como:
+
+- Uma implementação da linguagem de programação `S`;
+- Ambiente para estatística computacional e gráficos;
+
+O software pode ser obtido em [www.r-project.org](www.r-project.org).
+
+O `R` foi criado por Robert Gentleman e Ross Ihaka.
+
+## Programação Funcional
+
+Existem 2 tipos de objetos:
+
+1. **Dados**:
+    + $\pi$;
+    + `r pi`;
+    + "pi";
+    + matrizes com valores, tabelas, etc.
+2. **Funções**: operações que transformam **argumentos** em **valores de retorno** (resultados):
+    + $\log$;
+    + $+$;
+    + var;
+
+## Programação
+
+Programar é escrever funções que transformam argumentos em valores de retorno.
+
+Um bom programa reduz uma grande transformação em uma sequência de transformações menores.
+
+Em `R`, é boa prática distribuir um conjunto de funções que realizem uma tarefa específica no formato de pacotes.
+
+## Dados
+
+- Booleanos: binários (verdadeiro / falso); `logical`;
+- Inteiros: números inteiros que podem ser negativos ou positivos e incluem o zero; `integer`;
+- Caracteres: codificação especial; `character`;
+- Palavras (*strings*): conjunto de caracteres; `character`;
+- Número de ponto flutuante: uma fração multiplicada por um expoente (ex.: $1.13 \times 10^3$); `double/numeric`;
+- Valores faltantes ou mal-definidos: `NA`, `NaN`;
+
+## O Ambiente R
+
+O `R` possui diversos pacotes para auxiliar na execução de tarefas específicas. Por exemplo:
+
+- `ggplot2` para gráficos de alta qualidade;
+- `plyr` para manipulação de objetos;
+- `caret` para unificação de API para técnicas de regressão e classificação;
+- `splines` para disponibilização de métodos para *splines*.
+
+## Interação com o R
+
+A interação com o `R` é feita por meio do seu interpretador. Ele recebe comandos, que podem ser digitados individualmente ou interpretados a partir da leitura direta de um arquivo de *scripts*.
+
+```{r ex_r01}
+1/sqrt(2*pi)*exp(-3^2/2)
+dnorm(3)
+```
+
+## Comparações em R
+
+Comparações são operadores binários que retornam um booleano:
+
+```{r comps}
+3 < 9
+3 == 3
+3 > 9
+```
+
+## Tarefa
+
+Explique:
+```{r compnum}
+3*.15
+.45
+3*.15 == .45
+```
+
+## Definição de Tipos de Variáveis
+
+```{r, types}
+typeof(3)
+typeof(3L)
+typeof("3")
+typeof(3 == 3)
+```
+
+## Assinalando Valores a Variáveis
+
+```{r, assign}
+x1 = 1:10
+mean(x=x1)
+mean(x2 <- 1:3)
+x1
+x2
+```
+
+## Recomendação
+
+Ao programar, use nomes informativos de variáveis. Esta é a primeira chave para abstração na programação.
+
+```{r, nomesvars}
+raio = 8
+areaCirculo = 2*pi*(raio^2)
+areaCirculo
+```
+
+## Estruturas de Dados
+
+Uma sequência de valores é chamada **vetor**.
+
+```{r, vetor}
+x = c(9, 10, 4, 1)
+x[3]
+x[4] = 0
+x[-3]
+```
+
+## Operações com Vetores
+
+```{r, opvec1}
+y = c(-1, 14, -5, 0)
+x
+y
+x+y
+```
+
+## Operações com Vetores
+
+```{r, opvec2}
+x
+y
+x < y
+```
+
+## Reciclagem de Valores
+
+```{r, recycle}
+x
+x - c(9, 10)
+x < 10
+```
+
+## Comparação de Vetores
+
+```{r, compvec1}
+x
+y
+x == y
+identical(x, y)
+```
+
+## Comparação de Vetores
+
+```{r, compvec2}
+x
+y
+all.equal(x, y)
+```
+
+## Nomes para Itens de Vetores
+
+```{r, namevec}
+names(x) = c("Joao", "Maria", "Jose", "Pedro")
+x
+x["Maria"]
+```
+
+## `data.frames`
+
+Objetos do tipo `data.frame` são tabelas de dados cujas colunas podem ser de diferentes tipos (ao contrário de uma matriz, na qual todos os elementos são exatamente do modo).
+
+```{r, dfs}
+mydf = data.frame(x=c(9, 4, 10, 0), y=c('masc', 'fem', 'fem', 'masc'))
+mydf
+```
