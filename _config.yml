@@ -17,3 +17,5 @@ github_username:  estatcomp
 
 # Build settings
 markdown: kramdown
+exclude: ['*.Rmd']
+
