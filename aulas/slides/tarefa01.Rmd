@@ -1,0 +1,13 @@
+---
+title: "Tarefa 01 - Geração de Variáveis Aleatórias"
+output: html_document
+---
+
+**Instruções Gerais**
+Você produzirá códigos para a geração de variáveis aleatórias. Esta tarefa deverá ser retornada no formato de um relatório HTML produzido usando `RMarkdown` (via RStudio, por exemplo). Apresente a derivação completa da inversão (i.e., as fórmulas que foram utilizadas no processo). Todo o código utilizado para gerar as variáveis aleatórias deverá ser apresentado e encapsulado em uma função com nomes e argumentos conforme apresentados em cada questão.
+
+**Exercício 1:** Use o **método da inversão** para gerar variáveis aleatórias Exponenciais com parâmetro $\lambda$. A função a ser produzida deverá ser chamada `rexp2` e terá os argumentos `n` e `lambda`. Por exemplo, você deverá executar `rexp2(n=1000, lambda=10)` para gerar 1000 números aleatórios com média 10. Produza um teste estatístico que possa ser utilizado para validar a hipótese de que os números gerados de fato seguem a distribuição desejada.
+
+**Exercício 2:** Use o **método da inversão** para gerar variáveis aleatórias de acordo com uma Distribuição de Poisson com parâmetro $\lambda$. A função a ser produzida deverá ser chamada `rpois2` e terá os argumentos `n` e `lambda`. Por exemplo, você deverá executar `rpois2(n=1000, lambda=10)` para gerar 1000 números aleatórios com média 10. Produza um teste estatístico que possa ser utilizado para validar a hipótese de que os números gerados de fato seguem a distribuição desejada.
+
+**Exercício 3:** Use o **método da rejeição** para gerar variáveis aleatórias de acordo com uma Distribuição Normal com parâmetros $(\mu, \sigma^2)$. A função a ser produzida deverá ser chamada `rnorm2` e terá os argumentos `n`, `mu` e `sigma2`. Por exemplo, você deverá executar `rnorm2(n=1000, mu=2, sigma2=4)` para gerar 1000 números aleatórios com média 2 e variância 4. Utilize a densidade da exponencial dupla ($g(x) = e^{\frac{-|x|}{2}}$) para auxiliá-lo nesta tarefa. Produza um teste estatístico que possa ser utilizado para validar a hipótese de que os números gerados de fato seguem a distribuição desejada.
