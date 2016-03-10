@@ -1,0 +1,107 @@
+---
+title: "Métodos de Geração de Variáveis Aleatórias"
+author: "Benilton Carvalho"
+output: ioslides_presentation
+---
+
+## Introdução
+
+- Simular variáveis aleatórias (v.a.s.) é uma ferramenta fundamental em estatística computacional;
+- Para simular v.a.s. de uma população finita, é preciso ser capaz de gerar dados de uma distribuição uniforme;
+- Aqui assumiremos a disponibilidade de um gerador de uniforme (`runif`, no R);
+- Para gerar `n` valores aleatórios entre $[0,1]$, utiliza-se `runif(n)`;
+- O R possui outros geradores: `rnorm`, `rbeta`, `rgeom`, etc; mas e quando a distribuição de interesse não estiver implementada?
+
+## Método da Inversão - Caso Contínuo
+
+**Teorema:** Se $X$ é uma variável contínua com distribuição $F_X(x)$, então $U=F_X(x) \sim U(0,1)$.
+
+**Prova:** Defina a transformada inversa como: $$F_X^{-1}(u) = \mbox{inf}\{x: F_X(x)=u\}, u \in (0, 1)$$
+
+$$
+\begin{aligned}
+P(F_X^{-1}(U) \leq x) & = P( \mbox{inf}\{t: F_X(t)=U\} \leq x) \\
+                      & = P( U \leq F_X(x)) \\
+                      & = F_U(F_X(x)) = F_X(x),
+\end{aligned}
+$$
+
+portanto, $(F_X^{-1}(U))$ possui a mesma distribuição que $U$. Então, para simular uma observação de $X$, gera-se uma v.a. $u=Uniforme(0,1)$ e retorna-se $F_X^{-1}(u)$.
+
+## Exemplo
+
+$$
+\begin{aligned}
+f_X(x) & = 3x^2, \forall x\in (0,1) \\
+F_X(x) & = x^3, \forall x \in (0,1) \\
+F_X^{-1}(u) & = u^{1/3}
+\end{aligned}
+$$
+
+- Geram-se $u_1, \dots, u_n$ variáveis aleatórias $U(0,1)$ (`runif`);
+- Retornam-se $u_i^{1/3}, i=1,\dots,n$.
+
+## Método da Inversão - Caso Discreto
+
+No caso discreto, se 
+$$ \dots < x_{i-1} < x_i < x_{i+1}, \dots $$
+são os pontos de descontinuidade de $F_X(x)$, então a transformada inversa é
+$$ F_X^{-1}(u) = x_i,$$
+na qual $F_X(x_{i-1}) < u \leq F_X(x_i)$.
+
+## Exemplo: Geométrica(p)
+
+$$
+\begin{aligned}
+f(x) & = pq^x, & \mbox{para } x=0,1,\dots \\
+F_X(x) & = 1 - q^x, & \mbox{para } x=0,1, \dots
+\end{aligned}
+$$
+$$
+\begin{aligned}
+1-q^x & < & u & \leq & 1-q^{x+1} \\
+q^x & < & 1-u & \leq & q^{x+1} \\
+x & < & \frac{log(1-u)}{log(q)} & \leq & x+1
+\end{aligned}
+$$
+
+$$
+x+1 = \left\lceil \frac{log(1-u)}{log(q)} \right\rceil \implies x  = \left\lceil \frac{log(1-u)}{log(1-p)} \right\rceil - 1
+$$
+
+Obs: $\lceil w \rceil$ é o menor inteiro maior ou igual que $w$.
+
+## Método da Rejeição
+
+Suponha que deseja-se simular $X$ que tem densidade $f$:
+
+1. Encontre uma variável aleatória $Y$ com densidade $g$ tal que 
+$$\frac{f(t)}{g(t)} \leq c, \forall t:f(t)>0.$$
+2. Para cada variável aleatória a ser gerada:
+* Simule uma amostra $y$ a partir de $g$;
+* Simule $u \sim U(0,1)$;
+* Se $u < \frac{f(y)}{cg(y)}$, então retorne $x=y$. Caso contrário, retorne para o Passo 2a.
+
+## Como isso funciona?
+
+$$
+\begin{aligned}
+P(\mbox{Aceitar} | Y=y) & = P(U < \frac{f(y)}{cg(y)}) = \frac{f(y)}{cg(y)} \\
+P(\mbox{Aceitar}) & = \sum_y P(\mbox{Aceitar} | Y=y) P(Y=y) \\
+& = \frac{f(y)}{cg(y)}g(y) = \frac{1}{c} \\
+P(k | \mbox{Aceito}) & = \frac{P(\mbox{Aceito}|k) g(k)}{P(\mbox{Aceito})} = \frac{\frac{f(k)}{cg(k)}g(k)}{\frac{1}{c}} = f(k)
+\end{aligned}
+$$
+
+## Exemplo
+
+Gerar uma Beta(2,2). Assim, $f(x) = 6x(1-x), \forall x\in(0,1)$. Se escolhermos $g(y)=1, \forall y\in (0,1)$. Então:
+$$
+\frac{f(t)}{g(t)} = \frac{6x(1-x)}{1} = 6x(1-x) < 6 = c.
+$$
+
+Agora:
+
+- Gerar $y \sim U(0,1)$;
+- Gerar $u \sim U(0,1)$;
+- Aceitar se $u < \frac{f(y)}{cg(y)} = \frac{6y(1-y)}{6} = y(1-y)$;
