@@ -105,3 +105,7 @@ Agora:
 - Gerar $y \sim U(0,1)$;
 - Gerar $u \sim U(0,1)$;
 - Aceitar se $u < \frac{f(y)}{cg(y)} = \frac{6y(1-y)}{6} = y(1-y)$;
+
+## Referências
+
+Capítulo 3: Statistical Computing with R, Maria Rizzo.
