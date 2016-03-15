@@ -1,0 +1,154 @@
+---
+title: "Integração de Monte Carlo"
+output: ioslides_presentation
+---
+
+## Introdução
+
+- Integração de Monte Carlo é um método estatístico baseado em amostragem aleatória;
+- Em 1777, Comte de Buffon utilizou experimentos aleatórios para determinar as probabilidades envolvidas no experimento da Agulha de Buffon;
+- Gosset utilizou amostragem aleatória para estudar a distribuição $t$ de Student;
+
+## Integração de Monte Carlo
+
+- Seja $g(x)$ uma função;
+- Deseja-se determinar $\int_a^b g(x)dx < \infty$;
+- Note que se $X$ é uma v.a. com densidade $f(x)$, então: $$E[g(X)] = \int_{-\infty}^\infty g(x) f(x) dx.$$
+- Então, se $X_1, \dots, X_n$ é uma amostra aleatória desta $f(x)$, então um estimador não-viciado de $E[g(X)]$ é a média amostral de $g(X_1), \dots, g(X_n)$.
+$$\hat{\theta} = \overline{g(X)} = \frac{1}{n} \sum_{i=1}^n g(X_i)$$
+
+## Estimador Simples de Monte Carlo
+
+- Deseja-se estimar $\int_0^1 g(x) dx$;
+- Se $X_1, \dots, X_n$ é uma a.a. de Uniforme(0,1), então
+$$\hat{\theta} = \overline{g(X)} = \frac{1}{n} \sum_{i=1}^n g(X_i)$$
+converge em probabilidade para $E[g(X)] = \theta$.
+- Assim, o estimador simples de Monte Carlo para $\int_0^1 g(x) dx$ é $$\hat{\theta}=\overline{g(X)}$$.
+
+## Exemplo
+
+Determine uma estimativa de Monte Carlo para $\int_0^1 e^{-x} dx$.
+
+## Exemplo
+
+Determine uma estimativa de Monte Carlo para $\int_0^1 e^{-x} dx$.
+
+```{r}
+n = 1e5
+unifs = runif(n)
+gx = exp(-unifs)
+mean(gx)
+```
+
+## Exemplo
+
+Compare com o valor exato:
+```{r}
+mean(gx)
+(gxExact = 1-exp(-1))
+```
+
+Compare também com uma aproximação:
+```{r}
+integrate(function(x) exp(-x), 0, 1)
+```
+
+## Qual é a magnitude do erro desta estimativa?
+
+```{r}
+estimaGx = function(n){
+  unifs = runif(n)
+  gx = exp(-unifs)
+  return(mean(gx))
+}
+erroEstimativa = function(n){
+  gxExact = 1-exp(-1)
+  abs(gxExact-estimaGx(n))
+}
+```
+
+## Magnitude do erro
+
+```{r, fig.height=4, fig.width=4, fig.align='center'}
+n = 10^(0:7)
+erro = sapply(n, erroEstimativa)
+plot(n, erro, xlab='Tamanho da Amostra', log='xy',
+     ylab='Erro Absoluto', main=expression(e^{-x}))
+```
+
+## Mudando os Intervalos de Integração
+
+- Para estimar $\int_a^b g(x)dx$, faça uma mudança de variáveis de modo que o novo intervalo seja $(0,1)$.
+- Qual é essa transformação linear? 
+
+## Mudando os Intervalos de Integração
+
+- Para estimar $\int_a^b g(x)dx$, faça uma mudança de variáveis de modo que o novo intervalo seja $(0,1)$.
+- Qual é essa transformação linear? 
+$$y = \frac{x-a}{b-a}$$
+$$dy = \frac{1}{b-a} dx$$
+
+## Mudando os Intervalos de Integração
+$$y = \frac{x-a}{b-a}$$
+$$dy = \frac{1}{b-a} dx$$
+
+$$
+\int_a^b g(x)dx = \int_0^1 g(y(b-a)+b)(b-a)dy \\
+$$
+Alternativamente, utilize uma Uniforme(a,b):
+$$\int_a^b g(x)dx = (b-a) \int_a^b g(x) \frac{1}{b-a}dx$$
+
+## Exemplo
+
+Determine uma estimativa de Monte Carlo para $\int_1^2 e^{-x} dx$.
+
+```{r}
+n = 1e5
+unifs = runif(n, 1, 2)
+gx = exp(-unifs)
+mean(gx)
+exp(-1) - exp(-2)
+```
+
+## Intervalos não-limitados
+
+Determine uma estimativa de Monte Carlo para
+$$\int_{-\infty}^x \frac{1}{\sqrt{2\pi}} e^{-\frac{t^2}{2}} dt.$$
+
+Note que o intervalo não-limitado impede o uso direto do algoritmo dado. Entretanto, use a simetria da distribuição normal e divida o problema em duas partes:
+
+- $x \geq 0$
+- $x < 0$
+
+Assim o problema se resume a $\int_0^x \frac{1}{\sqrt{2\pi}} e^{-\frac{t^2}{2}} dt$.
+
+## Intervalos não-limitados
+
+Assim o problema se resume a $\int_0^x e^{-\frac{t^2}{2}} dt$.
+
+Efetuando a transformação de variáveis, temos:
+$$
+\begin{aligned}
+y & = \frac{t}{x} \\
+dt & = x dy \\
+\theta & = \int_0^1 x e^{-\frac{(xy)^2}{2}} dy \\
+\hat{\theta} & = E_Y\left[ x e^{-\frac{(xY)^2}{2}} \right]
+\end{aligned}
+$$
+
+## Intervalos não-limitados
+
+$$\hat{\theta} = E_Y\left[ x e^{-\frac{(xY)^2}{2}} \right]$$
+
+```{r}
+n = 1e6
+unifs = runif(n)
+xs = seq(0, 3, by=.5)
+Fxs = function(x, unifs)
+  1/2+mean(x*exp(-(x*unifs)^2/2))/sqrt(2*pi)
+gx = sapply(xs, Fxs, unifs)
+Phix = pnorm(xs)
+out = rbind(gx, Phix)
+colnames(out) = xs
+round(out, 4)
+```
