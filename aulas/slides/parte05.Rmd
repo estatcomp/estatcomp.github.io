@@ -152,3 +152,8 @@ out = rbind(gx, Phix)
 colnames(out) = xs
 round(out, 4)
 ```
+
+## Referências
+
+Capítulo 5 - Maria Rizzo - Statistical Computing with R
+
