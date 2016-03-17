@@ -153,6 +153,81 @@ colnames(out) = xs
 round(out, 4)
 ```
 
+## Se é Possível Simular $X$
+
+Encontre um estimador de Monte Carlo para $F_X(x)$ para $X\sim N(0,1)$.
+
+$$
+F_X(x) = P(X \leq x) = E \left[ I(X \leq x) \right]
+$$
+
+Então, é suficiente gerar $X_1, \dots, X_n$ segundo uma Normal(0,1) e determinar a proporção de observações pertencentes ao evento $\{X \leq x\}$, para qualquer $x$ pré-especificado.
+
+## Exemplo
+
+$F_X(x)$ para $X\sim N(0,1)$:
+
+```{r}
+n = 1e6
+xs = seq(0, 3, by=.5)
+z = rnorm(n)
+gx = sapply(xs, function(x, z) mean(z <= x), z)
+Phix = pnorm(xs)
+out = rbind(gx, Phix)
+colnames(out) = xs
+round(out, 4)
+```
+
+
+## O Erro-Padrão de $\hat{\theta} = \frac{1}{n} \sum g(x_i)$
+
+$$
+\mbox{V}(\hat{\theta}) = \frac{1}{n^2} \sum \mbox{V}_f\left[ g(x_i) \right] = \frac{\sigma^2}{n}
+$$
+
+Ao utilizarmos a distribuição empírica de $X$, temos:
+$$ \mbox{V}_f\left[ g(X) \right] = \frac{1}{n} \sum_{i=1}^n \left[ g(x_i) - \overline{g(x)}\right]^2 $$
+
+Assim:
+
+$$
+\begin{aligned}
+\mbox{se}(\hat{\theta}) & = \frac{\sigma}{\sqrt{n}} = \frac{1}{n} \sqrt{\sum_{i=1}^n \left[ g(x_i) - \overline{g(x)}\right]^2}
+\end{aligned}
+$$
+
+## IC para a Integral por Monte Carlo
+
+Segundo o Teorema do Limite Central, temos: $$\frac{\hat{\theta_n} - E(\hat{\theta_n})}{\sqrt{V(\hat{\theta_n})}} \sim N(0, 1), \mbox{quando } n \rightarrow \infty$$
+
+## Exemplo 1
+
+Determine o IC(95%) para o estimador de Monte Carlo de $F_X(x)$, quando $X \sim Normal(0,1)$ e $x=1.75$, utilizando a esperança segundo uma distribuição Uniforme. Note que $F_X(1.75)=$ `r round(pnorm(1.75), 4)`.
+
+```{r}
+n = 1e6
+x = 1.75
+unifs = runif(n)
+gx = 1/2+x*exp(-(x*unifs)^2/2)/sqrt(2*pi)
+v = mean((gx-mean(gx))^2)/n
+ic = round(mean(gx) + c(-1, 1) * 1.96*sqrt(v), 4)
+ic
+```
+
+## Exemplo 2
+
+Determine o IC(95%) para o estimador de Monte Carlo de $F_X(x)$, quando $X \sim Normal(0,1)$ e $x=1.75$, utilizando a esperança de uma função indicadora. Note que $F_X(1.75)=$ `r round(pnorm(1.75), 4)`.
+
+```{r}
+n = 1e6
+x = 1.75
+z = rnorm(n)
+gx = z <= x
+v = mean((gx-mean(gx))^2)/n
+ic = round(mean(gx) + c(-1, 1) * 1.96*sqrt(v), 4)
+ic
+```
+
 ## Referências
 
 Capítulo 5 - Maria Rizzo - Statistical Computing with R
