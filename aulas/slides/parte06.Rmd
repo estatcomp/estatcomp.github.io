@@ -1,0 +1,41 @@
+---
+title: "Métodos de Monte Carlo em Inferência"
+output: ioslides_presentation
+---
+
+## Introdução
+
+Métodos de Monte Carlo compõem uma parte significativa de métodos computacionais em Estatística. Anteriormente, discutimos Integração por Monte Carlo. Mas outras aplicações incluem estimação de:
+- parâmetros da distribuição amostral de uma estatística;
+- erros quadrados médios
+- percentis;
+- probabilidades de cobertura de intervalos de confiança;
+- poder de testes;
+- e outras quantidades de interesse.
+
+## Métodos de Monte Carlo para Estimação
+
+Suponha que $X_1, \dots, X_n$ seja uma amostra aleatória tomada a partir da distribuição de $X$. O estimador $\hat{\theta}$ do parâmetro $\theta$ é a função $n$-variada baseada nesta amostra, como mostrado a seguir:
+
+$$ \hat{\theta} = \theta(X_1, \dots, X_n) $$
+
+## Exemplo - Estimação de Monte Carlo e Erro-Padrão
+
+Se $X_1, \dots, X_n \sim N(0, 1)$, estime $E |X_1 - X_2|$.
+
+- Gerar $y_i = (X_{1i}, X_{2i})$;
+- Determinar $g(y_i) = | X_{1i} - X_{2i} |$;
+- Retornar: $$\hat{\theta} = \overline{g(Y)}$$
+
+## Exemplo - Estimação do Erro-Padrão
+
+$$\sqrt{V(\bar{X})} = \sqrt{\frac{V(X)}{n}}$$
+$$\sqrt{V(\overline{g(X)})} = \sqrt{\frac{V(g(X))}{n}}$$
+
+Se $X_1, \dots, X_n \sim N(0, 1)$, como estimar o erro-padrão do estimador de $E |X_1 - X_2|$?
+
+## Exemplo - Estimação do Erro-Quadrado Médio
+
+$$MSE(\hat{\theta}) = E\left[(\hat{\theta}-\theta)^2\right]$$
+
+
