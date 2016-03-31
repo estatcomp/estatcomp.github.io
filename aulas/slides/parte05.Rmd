@@ -285,7 +285,9 @@ $$V\left( \frac{U_1+U_2}{2} \right) = \frac{V(U_1)+V(U_2)}{4}.$$
 
 Se $U_1$ e $U_2$ forem negativamente correlacionadas, então:
 
-$$V\left( \frac{U_1+U_2}{2} \right) = \frac{V(U_1)+V(U_2)-Cov(U_1, U_2)}{4}.$$
+$$V\left( \frac{U_1+U_2}{2} \right) = \frac{V(U_1)+V(U_2)+2Cov(U_1, U_2)}{4},$$
+
+note que $Cov(U_1,U_2) < 0$.
 
 ## Um pouco de teoria
 
@@ -319,7 +321,7 @@ $$
 
 Anteriormente, estimamos:
 
-$$\Phi(x) = \int_{-\infty}^x \frac{1}{2\pi}e^{-t^2/2}dt$$
+$$\Phi(x) = \int_{-\infty}^x \frac{1}{\sqrt{2\pi}}e^{-t^2/2}dt$$
 
 utilizando:
 
@@ -380,7 +382,68 @@ round(100*(var(mc1)-var(mc2))/var(mc1), 2)
 
 Nosso objetivo é estimar $\theta = E[g(X)]$. Suponha que exista $f$ para a qual você conheça $\mu = E\left[f(X)\right]$ e que ela seja correlacionado com $g(X)$. Então, um estimador não-viciado de $\theta$ é:
 
-$$\hat{\theta}_c = g(X) + c(f(Y)-\mu).$$
+$$\hat{\theta}_c = g(X) + c(f(X)-\mu).$$
+
+$$V(\hat{\theta}_c) = V(g(X)) + c^2 V(f(X)) + 2c Cov(g(X), f(X))$$
+
+$V(\hat{\theta}_c)$ é quadrática em $c$. Portanto, seu valor de mínimo é atingido quando:
+
+$$c^{*} = -\frac{Cov(g(X), f(X))}{V(f(X))}.$$
+
+## Variáveis de Controle
+
+Utilizando o resultado anterior, então a variância mínima é:
+
+$$
+V(\hat{\theta}_c) = V(g(X)) - \frac{Cov^2(g(X), f(X))}{V(f(X))}
+$$
+
+Assim, a redução de variância é:
+
+$$
+100 \times \left\{ \frac{Cov^2(g(X), f(X))}{V(g(X))V(f(X))} \right\} = 100 \times Cor^2(g(X), f(X)).
+$$
+
+## Observações: Variáveis de Controle
+
+- O método é melhor para casos de alta correlação entre $f(X)$ e $g(X)$;
+- O ganho é nulo se estas funções forem não-correlacionadas;
+- Para determinar $c^{*}$ são necessárias $Cov(f(X), g(X))$ e $V(f(X))$;
+- Se estas características forem desconhecidas, então podemos utilizar um experimento de Monte Carlo para estimá-las;
+
+## Exemplo
+
+$$\theta = E\left[ e^U \right] = \int_0^1 e^u du,$$
+
+expressão na qual $U\sim U(0,1)$.
+
+Se escolhemos $f(U) = U$, então $E(U)=1/2$ e $V(U)=1/12$. 
+
+- $Cov(f(U), g(U)) = ?$
+- $c^{*} = -\frac{Cov(e^U, U)}{V(U)} = ?$
+- $\hat{\theta}_c = g(U) + c^{*} (f(U)-\mu)$
+
+## Exemplo
+
+```{r}
+n = 1e6
+U = runif(n)
+T1 = exp(U)
+ce = -12 + 6*(exp(1)-1)
+T2 = exp(U) + ce*(U-0.5)
+c(mean(T1), mean(T2), (var(T1)-var(T2))/var(T1), cor(exp(U), U)^2)
+```
+
+## Exemplo 2
+
+$$\theta = \int_0^1 \frac{e^{-x}}{1+x^2} dx$$
+
+Então, $g(X) = \frac{e^{-x}}{1+x^2}$ e $X \sim U(0, 1)$.
+
+Escolhendo-se $f(X) = \frac{e^{-0.5}}{1+x^2}$, temos $E[f(X)] = \frac{\pi}{4\sqrt{e}}$.
+
+- $c^{*} = -\frac{Cov(f(X), g(X))}{V(f(X))} = ?$
+- $\hat{\theta}_c = g(X) + c^{*} (f(X)-\mu)$
 
 ## Referências
 
