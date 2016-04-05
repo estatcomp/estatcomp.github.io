@@ -1,0 +1,342 @@
+---
+title: "Visualização de Dados Multivariados"
+output: ioslides_presentation
+---
+
+## Introdução
+
+- Toda análise estatística depende de boas estratégias para a visualização de dados;
+- Formas ineficientes de visualização colaboram para inferências incorretas;
+- A aplicaçnao de boas estratégias gráficas não é uma tarefa trivial.
+
+## Exemplos de funções para visualização de dados
+
+Método | função (graphics) | no pacote (package)
+-------|---------------|-------
+3D scatterplot            |       | cloud (lattice)
+Matrix of scatterplots    | pairs | splom (lattice)
+Bivariate density surface | persp | wireframe (lattice)
+Contour plot              | contour, image contourLines, filled.contour | contourplot (lattice) , contour (MASS), levelplot (lattice)
+Parallel coord. plot      | | parallel (lattice), parallelplot (MASS)
+
+
+## Exemplos de funções para visualização de dados
+
+Método | função (graphics) | no pacote (package)
+-------|---------------|-------
+Star plot | stars | .
+Segment plot | stars |    .
+Interactive 3D graphics | | (rggobi), (rgl)
+
+
+
+
+## Matriz de Dispersão
+
+- A matriz de dispersão é uma generação do gráfico de dispersão;
+- Ela deve ser aplicada para conjuntos contendo múltiplas variáveis contínuas;
+- O gráfico é produzido pela combinação dos diagramas para todos os pares de variáveis;
+
+## Exemplo 1 - Matriz de Dispersão
+```{r, scatter_matrix_iris, fig.align='center', fig.height=4.5, fig.width=4.5}
+data(iris)
+pairs(iris[101:150, 1:4])
+```
+
+## Exemplo 2 - Matriz de Dispersão+
+```{r, def_panel_density}
+panel.d <- function(x, ...) {
+   usr <- par("usr")
+   on.exit(par(usr))
+   par(usr = c(usr[1:2], 0, .5))
+   lines(density(x))
+}
+```
+
+## Exemplo 2 - Matriz de Dispersão+
+```{r, scatter_matrix_density, fig.align='center', fig.height=4.5, fig.width=4.5}
+x <- scale(iris[101:150, 1:4])
+r <- range(x)
+pairs(x, diag.panel = panel.d, xlim = r, ylim = r)
+```
+
+
+## Exemplo 3 - Matriz de Dispersão via Lattice
+```{r, scatter_matriz_lattice}
+library(lattice)
+splom(iris[101:150, 1:4])
+splom(iris[,1:4], groups = iris$Species)
+splom(~iris[1:4], groups = Species, data = iris,
+col = 1, pch = c(1, 2, 3), cex = c(.5,.5,.5))
+
+```
+
+## Gráficos de Superfície e 3D
+
+- Visualização de superfície pode ser realizada de diversas maneiras;
+- Habitualmente, usuários buscar criar gráficos 3D;
+- Gráficos 3D são problemáticos quando apresentados estaticamente;
+
+## Exemplo - Normal Bivariada
+
+$$ f(x,y) = \frac{1}{2\pi}e^{-\frac{1}{2}(x^2 + y^2)} , (x,y) \in \Re^{2}$$ 
+
+Define-se, então a função bivariada e determinam-se seus valores em um grid:
+```{r, norm_biv_grid}
+f <- function(x,y) {
+  z <- (1/(2*pi)) * exp(-.5 * (x^2 + y^2))
+}
+y <- x <- seq(-3, 3, length=50)
+z <- outer(x, y, f)
+```
+
+
+## Normal Bivariada
+
+```{r, biv_norm_surf1, fig.align='center', fig.height=4.5, fig.width=4.5}
+persp(x, y, z)
+```
+
+## Normal Bivariada
+```{r, plot_persp}
+persp(x, y, z, theta=45, phi=30, expand=0.6, ltheta=120, shade=0.75,
+      ticktype="detailed", xlab="X", ylab="Y", zlab=expression(f(x,y)))
+```
+
+## Outras funções para gráficos de superfícies
+  Gráficos de superfícies podem ser feitos usando a função wireframe (lattice)
+
+  O gráfico a seguir mostra a distribuição normal multivariada usando o wireframe
+
+## Normal Bivariada - `wireframe`
+```{r, plot_wireframe}
+library(lattice)
+wireframe(z)
+```
+
+## Gráficos de Dispersão 3D
+
+- A função `cloud` produz gráficos de dispersão 3D;
+- Uma possível aplicação desse tipo de gráfico é explorar de existem aglomerados ou grupos nos dados;
+- O problema deste tipo de visualização é a perda de informação em representar informações 3D em um plano 2D.
+
+
+## Nuvem de Pontos
+```{r, cloud_points}
+library(lattice)
+cloud(Petal.Length ~ Sepal.Length * Sepal.Width, data=iris, groups=Species)
+``` 
+
+## Nuvem de Pontos
+```{r, cloud_points2}
+cloud(Sepal.Length~Petal.Length*Petal.Width, data=iris, groups=Species,
+      pch=1:3, zlab="SL", screen=list(z=30, x=-75, y=0))
+```
+
+
+## Gráficos de Contorno
+
+- Gráficos de contorno representam uma superfície 3D $(x,y,f(x,y))$ em um plano pela projeção das curvas de nível $f(x,y) = c$ para uma constante c;
+- As funções  `countour(graphics)` e `countorplot(lattice)` podem ser utilizadas para isso;
+- Utilizaremos o conjunto `volcano` como exemplo. Ele é uma matriz de 87x61 contendo informações topograficas do vulcão de Maunga Whau.
+
+## Gráfico de Contorno I
+```{r, contour_plot_1, fig.align='center', fig.height=4.5, fig.width=4.5}
+contour(volcano, asp = 1, labcex = 1)
+```
+
+## Gráfico de Contorno II
+```{r, contour_plot_2, fig.align='center', fig.height=4.5, fig.width=4.5}
+library(lattice)
+contourplot(volcano) 
+```
+
+## Gráficos de Contorno Preenchidos
+
+- É possível fazer um gráfico de contorno com um efeito 3D e mostrá-lo em 2D sobrepondo as linhas de contorno com uma cor correspondente a altura;
+- Um exemplo utilizará a função `contour`;
+- O exemplo seguinte utilizará a função `filledcontour`;
+- O exemplo final utilizará a função `levelplot`;
+
+## Gráfico de Contorno Preenchido I
+```{r, contour_plot_3, fig.align='center', fig.height=4.5, fig.width=4.5}
+image(volcano, col = terrain.colors(100), axes = FALSE)
+contour(volcano, levels = seq(100,200,by = 10), add = TRUE)
+```
+
+## Gráfico de Contorno Preenchido II
+```{r, , contour_plot_4, fig.align='center', fig.height=4.5, fig.width=4.5}
+filled.contour(volcano, color = terrain.colors, asp = 1)
+```
+
+## Gráfico de Contorno Preenchido III
+```{r, level_plot, fig.align='center', fig.height=4.5, fig.width=4.5}
+levelplot(volcano)
+```
+
+## Visualização de Bases Volumosas
+
+- As opções acima podem ser utilizadas em qualquer conjunto de dados;
+- Grandes bases de dados terão sua visualização afetada;
+- O pacote `hexbin` possui uma implementação que incorpora densidade dos dados em seus diagramas.
+
+## Base de Dados Volumosa I
+
+```{r, vis_bigdata_1, fig.align='center', fig.height=4.5, fig.width=4.5, cache=TRUE}
+x <- matrix(rnorm(2e6), nc=2)
+plot(x, xlab='Dim 1', ylab='Dim 2')
+```
+
+## Base de Dados Volumosa II
+
+```{r, vis_bigdata_2, fig.align='center', fig.height=5, fig.width=5}
+library(hexbin)
+plot(hexbin(x), xlab='Dim 1', ylab='Dim 2')
+```
+
+## Curvas de Andrews:
+
+Se $X_1, \dots, X_n \in R^d$, uma idéia de visualização em duas dimensões é projetar  cada vetor em uma função real. As "Curvas de Andrews" mapeiam a observação $x_i = x_{i1}, \dots, x_{id}$ na função:
+
+$$ f_{i}(t) = \frac{x_{i1}}{\sqrt{2}} + x_{i2}\sin{t} + {x_{i3}}\cos{t} + {x_{i4}}\sin{2t} + {x_{i5}}\cos{2t} + \dots$$
+
+$$ = \frac{x_{i1}}{\sqrt{2}} + \sum_{1 \leq k \leq d/2} x_{i,2k}\sin{kt} + \sum_{1 \leq k \leq d/2}x_{i,2k+1}\cos{kt} $$ 
+
+$$ -\pi \leq t \leq \pi $$
+
+Assim, cada observação é representada por sua projeção em um conjunto de funções base (ortogonais): $\{ 2^{-1/2}, \{sin kt\}, \{cos kt\} \}$
+
+## Curvas de Andrews
+
+- Banco de dados `lefshape` no pacote `DAAG`;
+- Três medidas serão consideradas correspondentes a pontos no $\Re^{3}$
+- Para representar as curvas, defina uma função para computar $f_{i}(t)$ para pontos arbritários em $\Re^{3}$ e $-\pi \leq t \leq \pi$.
+  
+## Curvas de Andrews
+```{r, prep_andrews}
+library(DAAG)
+x <- with(leafshape17, cbind(bladelen, petiole, bladewid))
+n <- nrow(x)
+mins <- apply(x, 2, min)
+maxs <- apply(x, 2, max)
+r <- maxs - mins
+y <- sweep(x, 2, mins)
+y <- sweep(y, 2, r, "/")
+x <- 2 * y - 1
+a <- seq(-pi, pi, len=101)
+dim(a) <- length(a)
+```
+
+## Curvas de Andrews
+```{r, plot_andrews2, eval=FALSE}
+f <- function(a, v) {
+   v[1]/sqrt(2) + v[2]*sin(a) + v[3]*cos(a)
+}
+
+plot(0, 0, xlim=c(-pi, pi), ylim=c(-3,3), xlab="t",
+     ylab="Andrews Curves", main="", type="n")
+for (i in 1:n) {
+   g <- leafshape17$arch[i] + 1
+   y <- apply(a, MARGIN = 1, FUN = f, v = x[i,])
+   lines(a, y, lty = g)
+}
+legend(3, c("Orthotropic", "Plagiotropic"), lty = 1:2)
+```
+
+## Curvas de Andrews
+```{r, plot_andrews, echo=FALSE}
+f <- function(a, v) {
+   v[1]/sqrt(2) + v[2]*sin(a) + v[3]*cos(a)
+}
+
+plot(0, 0, xlim=c(-pi, pi), ylim=c(-3,3), xlab="t",
+     ylab="Andrews Curves", main="", type="n")
+for (i in 1:n) {
+   g <- leafshape17$arch[i] + 1
+   y <- apply(a, MARGIN = 1, FUN = f, v = x[i,])
+   lines(a, y, lty = g)
+}
+legend(3, c("Orthotropic", "Plagiotropic"), lty = 1:2)
+```
+
+## Coordenadas Paralelas
+
+- Gráficos com coordenadas paralelas produzem uma outra abordagem para vizualição de dados multivariados'
+- Os gráficos em coordenadas paralelas são implementados pela função `parallelplot` no pacote `lattice`;
+- Uma implementação alternativa é a função `parcoord` no pacote `MASS`.
+
+## Coordenadas Paralelas I
+```{r, parcoord_plot1, message=FALSE, warning=FALSE}
+library(DAAG)
+library(MASS)
+x <- crabs[seq(5, 200, 5), ] 
+```
+
+## Coordenadas Paralelas I
+```{r, parcoord_plot2, message=FALSE, warning=FALSE, fig.align='center', fig.width=4.5, fig.height=4.5}
+parcoord(x[4:8])
+```
+
+## Coordenadas Paralelas II
+```{r, parallelplot1, message=FALSE, warning=FALSE}
+library(lattice)
+x <- crabs[seq(5, 200, 5), ]
+a <- x$CW * x$CL
+x[4:8] <- x[4:8] / sqrt(a)
+```
+
+## Coordenadas Paralelas II
+```{r, parallelplot2, message=FALSE, warning=FALSE, fig.align='center', fig.width=4.5, fig.height=4.5}
+parallelplot(~x[4:8] | sp*sex, x)
+```
+
+## Segmentos, estrelas e outras representações
+  Dados Multivariados podem ser representados por um glifo ou ícone de duas dimensões. Algumas representações com ícones podem ser melhor apresentadas em uma tabela. Entretanto, não é muito prático quando se tem uma quantidade muito grande dados. A seguir mostra-se exemplos usando star plots e segment plot. Esse tipo de gráfico é fácilmente obtido no r usando a função stars(graphics),
+
+## Exemplo
+```{r}
+library(MASS) 
+attach(crabs)
+x <- crabs[seq(5, 200, 5), ]
+x <- subset(x, sex == "M")
+a <- x$CW * x$CL
+x[4:8] <- x[4:8] / sqrt(a)
+palette(gray(seq(.4, .95, len = 5))) 
+stars(x[4:8], draw.segments = TRUE,
+labels = as.character(x$sp), nrow = 4,
+ylim = c(-2,10), key.loc = c(3,-1))
+palette("default"); detach(crabs)
+``` 
+
+## Exemplo - Gráfico
+```{r, echo=FALSE}
+library(MASS) 
+attach(crabs)
+x <- crabs[seq(5, 200, 5), ]
+x <- subset(x, sex == "M")
+a <- x$CW * x$CL
+x[4:8] <- x[4:8] / sqrt(a)
+palette(gray(seq(.4, .95, len = 5))) 
+stars(x[4:8], draw.segments = TRUE,
+labels = as.character(x$sp), nrow = 4,
+ylim = c(-2,10), key.loc = c(3,-1))
+palette("default"); detach(crabs)
+``` 
+
+## Exercício 1
+Gere 200 observações aleatórias da distribuição normal multivariada com o vetor de média sendo $\mu = (0,1,2)$ e a matriz de covariância:
+
+$$\sum =\left[\begin{array}{rrr}
+1.0&-0.5&0.5\\
+-0.5&1.0&-0.5\\
+0.5&-0.5&1.0\\
+\end{array}\right]\quad
+$$
+
+Construa o Scatterplot matrix e verifique a localização e correlação para cada gráfico com os parâmetros da normal bivariada.
+
+## Exercício 2
+Sejam duas variáveis aleatórias $X$ e $Y$ independentes e identicamente distribuidas com mistura de normais. As componentes da mistura tem $N(0,1)$ e $N(3,1$) e com probabilidades $p_{1}$ e $p_{2}= 1 - p_{1}$ respectivamente. Gere uma distribuição normal bivariada com a distribuição $(X,Y)$ e construa um gráfico de contorno com o contourplot. 
+
+## Referências
+Capítulo 4 - Maria Rizzo - Statistical Computing with R
