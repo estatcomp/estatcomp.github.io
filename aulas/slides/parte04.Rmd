@@ -291,52 +291,18 @@ parallelplot(~x[4:8] | sp*sex, x)
 ```
 
 ## Segmentos, estrelas e outras representações
-  Dados Multivariados podem ser representados por um glifo ou ícone de duas dimensões. Algumas representações com ícones podem ser melhor apresentadas em uma tabela. Entretanto, não é muito prático quando se tem uma quantidade muito grande dados. A seguir mostra-se exemplos usando star plots e segment plot. Esse tipo de gráfico é fácilmente obtido no r usando a função stars(graphics),
 
-## Exemplo
-```{r}
+- Dados Multivariados podem ser representados por um glifo ou ícone de duas dimensões;
+- Algumas representações com ícones podem ser melhor apresentadas em uma tabela. Entretanto, não é muito prático quando se tem uma quantidade muito grande dados.
+- A seguir mostram-se exemplos usando star plots e segment plot. Esse tipo de gráfico é fácilmente obtido no R usando a função `stars(graphics)`.
+
+## Gráfico de Estrela/Segmento
+```{r, stars_plot, fig.align='center', fig.height=4, fig.width=4}
 library(MASS) 
-attach(crabs)
-x <- crabs[seq(5, 200, 5), ]
-x <- subset(x, sex == "M")
-a <- x$CW * x$CL
-x[4:8] <- x[4:8] / sqrt(a)
-palette(gray(seq(.4, .95, len = 5))) 
-stars(x[4:8], draw.segments = TRUE,
-labels = as.character(x$sp), nrow = 4,
-ylim = c(-2,10), key.loc = c(3,-1))
-palette("default"); detach(crabs)
-``` 
-
-## Exemplo - Gráfico
-```{r, echo=FALSE}
-library(MASS) 
-attach(crabs)
-x <- crabs[seq(5, 200, 5), ]
-x <- subset(x, sex == "M")
-a <- x$CW * x$CL
-x[4:8] <- x[4:8] / sqrt(a)
-palette(gray(seq(.4, .95, len = 5))) 
-stars(x[4:8], draw.segments = TRUE,
-labels = as.character(x$sp), nrow = 4,
-ylim = c(-2,10), key.loc = c(3,-1))
-palette("default"); detach(crabs)
-``` 
-
-## Exercício 1
-Gere 200 observações aleatórias da distribuição normal multivariada com o vetor de média sendo $\mu = (0,1,2)$ e a matriz de covariância:
-
-$$\sum =\left[\begin{array}{rrr}
-1.0&-0.5&0.5\\
--0.5&1.0&-0.5\\
-0.5&-0.5&1.0\\
-\end{array}\right]\quad
-$$
-
-Construa o Scatterplot matrix e verifique a localização e correlação para cada gráfico com os parâmetros da normal bivariada.
-
-## Exercício 2
-Sejam duas variáveis aleatórias $X$ e $Y$ independentes e identicamente distribuidas com mistura de normais. As componentes da mistura tem $N(0,1)$ e $N(3,1$) e com probabilidades $p_{1}$ e $p_{2}= 1 - p_{1}$ respectivamente. Gere uma distribuição normal bivariada com a distribuição $(X,Y)$ e construa um gráfico de contorno com o contourplot. 
+x <- subset(crabs[seq(5, 200, 5), ], sex=='M')
+x[4:8] <- x[4:8] / sqrt(x$CW * x$CL)
+stars(x[4:8], draw.segments = TRUE, labels = as.character(x$sp))
+```
 
 ## Referências
 Capítulo 4 - Maria Rizzo - Statistical Computing with R
