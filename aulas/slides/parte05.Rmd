@@ -445,6 +445,93 @@ Escolhendo-se $f(X) = \frac{e^{-0.5}}{1+x^2}$, temos $E[f(X)] = \frac{\pi}{4\sqr
 - $c^{*} = -\frac{Cov(f(X), g(X))}{V(f(X))} = ?$
 - $\hat{\theta}_c = g(X) + c^{*} (f(X)-\mu)$
 
+## Amostragem por Importância
+
+- Em Cálculo, o valor médio de $g(x)$ no intervalo $(a,b)$ é: 
+
+$$\frac{1}{b-a}\int_a^b g(x)dx;$$
+
+- Isso é análogo à $E[g(X)]$ quando $X \sim U(a,b)$;
+- Trata-se apenas da média de $g(x)$ no referido intervalo utilizando a uniforme como função de ponderação;
+
+## Amostragem por Importância
+
+- Assim, se $X_1, \dots, X_n \sim U(a,b)$, então o estimador de Monte Carlo de $\int_a^b g(x) dx$ é:
+
+$$ \frac{b-a}{n}\sum_{i=1}^n g(X_i)$$
+
+- Este método habitualmente falha em intervalos não-limitados;
+- O método também pode ser ineficiênte se $g(X)$ não for muito uniforme;
+
+## Amostragem por Importância
+
+Ao considerarmos o problema de calcular uma integral como sendo uma determinação de esperanças, torna-se razoável considerar outras funções de ponderação (densidade). Esta estratégia nos leva ao Método de Amostragem por Importância.
+
+- $X \sim f(x)$;
+- $f(x) > 0, \forall  \{x : g(x) > 0\}$;
+- Seja $Y$ a variável aleatória $Y = g(X)/f(X)$, então:
+
+$$E(Y) = \int \frac{g(x)}{f(x)} f(x) dx = \int g(x) dx$$
+
+## Amostragem por Importância
+
+Assim, estimamos $E(Y)$ utilizando:
+
+$$\frac{1}{n} \sum_{i=1}^n \frac{g(x_i)}{f(x_i)}.$$
+
+- A variância deste estimador é $V(Y)/n$, portanto deve ser pequena;
+- Quanto mais constante for $Y$, menor será a variância;
+- Desta maneira, devemos escolher uma $f(x)$ bastante próxima de $g(x)$.
+
+## Exemplo - Amostragem por Importância
+
+Considere a integral
+
+$$ \int_0^1 \frac{e^{-x}}{1+x^2} dx$$
+
+e as seguintes funções candidatas:
+
+$$
+\begin{aligned}
+f_0(x) & = 1, & \forall & x \in (0,1); \\
+f_1(x) & = e^{-x}, & \forall & x \in (0, \infty); \\
+f_2(x) & = (1+x^2)^{-1}/\pi, & \forall & x \in (-\infty, \infty); \\
+f_3(x) & = e^{-x}/(1+e-1), & \forall & x \in (0, 1); \\
+f_4(x) & = 4(1+x^2)^{-1}/\pi, & \forall & x \in (0, 1).
+\end{aligned}
+$$
+
+## Exemplo - Amostragem por Importância
+
+- Todas as funções são positivas no intervalo $(0,1)$, onde $g(x)>0$;
+- As funções $f_1$ e $f_2$ tem intervalos maiores e vários dos valores simulados contarão como zero. Assim, elas são ineficientes;
+- São densidades fáceis de serem simuladas;
+- **Exercício 1:** fazer gráficos de $g(x)$ e $f_i(x)$;
+- **Exercício 2:** estimar a integral usando amostragem por importância;
+- **Exercício 3:** estimar o erro-padrão das estimativas acima;
+
+## Variância em Amostragem por Importância
+
+$$ \theta = \int_A g(x) dx = \int_A \frac{g(x)}{\phi(x)} dx = E\left[ \frac{g(x)}{\phi(x)}\right]$$
+
+Se $X_1, \dots, X_n \sim F_X$, o estimador de MC é:
+
+$$\frac{1}{n} \sum_{i=1}^n \frac{g(x_i)}{\phi(x_i)}$$.
+
+Assim, a variância:
+
+$$ V(\hat{\theta}) = E[\hat{\theta}^2] - E^2[\theta] = \int_A \frac{g^2(x)}{\phi(x)} dx - \theta^2.$$
+
+## Variância em Amostragem por Importância
+
+$$ V(\hat{\theta}) = E[\hat{\theta}^2] - E^2[\theta] = \int_A \frac{g^2(x)}{\phi(x)} dx - \theta^2$$
+
+Podemos escolher a distribuição de $X$ para minimizar a variância, que será obtida quando:
+
+$$\phi(x) = \frac{|g(x)|}{\int_A |g(x)| dx}.$$
+
+Regra geral: $\phi(x) \approx |g(x)| f(x), \forall x \in A$.
+
 ## Referências
 
 Capítulo 5 - Maria Rizzo - Statistical Computing with R
