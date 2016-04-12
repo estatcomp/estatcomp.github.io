@@ -38,4 +38,160 @@ Se $X_1, \dots, X_n \sim N(0, 1)$, como estimar o erro-padrão do estimador de $
 
 $$MSE(\hat{\theta}) = E\left[(\hat{\theta}-\theta)^2\right]$$
 
+Se $m$ amostras de $X_1^{(j)}, \dots, X_n^{(j)}, \forall j \in 1, \dots, m$ são geradas da distribuição de $X$, então:
+
+$$\hat{MSE} = \frac{1}{m} \sum_{i=1}^m \left( \hat{\theta}^{(j)}-\theta \right)^2,$$
+
+onde $\hat{\theta}^{(j)} = \hat{\theta}(x_1^{(j)}, \dots, x_n^{(j)})$.
+
+## MSE para Média Aparada
+
+Se $X_{(1)}, \dots, X_{(n)}$ são as estatísticas de ordem da amostra $X_1, \dots, X_n$, então a média aparada de nível $k$ é:
+
+$$\bar{X}_{[-k]} = \frac{1}{n-2k} \sum_{i=k+1}^{n-k} X_{(i)}.$$
+
+Determine a estimativa de Monte Carlo do $MSE(\bar{X}_{[-1]})$, assumindo que $X\sim N(0, 1)$.
+
+## MSE para Média Aparada
+
+1. Defina $T^{(j)}$ como a $j$-ésima réplica de Monte Carlo para $\bar{X}_{[-1]}$;
+2. Determine $T^{(j)}$, para $j=1,\dots,m$, repetindo:
+    - Gere $x^{(j)}_1, \dots, x^{(j)}_n$ a partir da distribuição de $X$;
+    - Obtenha as estatísticas de ordem $x^{(j)}_{(1)}, \dots, x^{(j)}_{(n)}$;
+    - Determine $T^{(j)} = \frac{1}{n-2}\sum_{i=2}^{n-1} x^{(j)}_{(i)}$;
+3. Estime $MSE(T) = \frac{1}{m} \sum_{j=1}^m \left( T^{(j)} - \theta\right)^2 = \frac{1}{m}\sum_{j=1}^m \left( T^{(j)}\right)^2$
+
+Note que $\theta = E(X) = E(X_{[-1]}) = 0$, pois $X \sim N(0,1)$.
+
+## MSE para a Média Aparada
+
+```{r mse_media_aparada}
+m = 1000
+n = 20
+tmean = replicate(m, {
+ x = rnorm(n)
+ y = sort(x)[2:(n-1)]
+ mean(y)
+})
+(mse = mean(tmean^2))
+var.tmean = mean((tmean-mean(tmean))^2)
+(se.tmean = sqrt(var.tmean/m))
+```
+
+## Método de Monte Carlo para Estimação de Níveis de Confiança
+
+Se a variável de interesse é $X \sim F_X$ e $\theta$ é o parâmetro a ser estimado, então:
+
+1. Para cada réplica de MC ($j=1, \dots, m$)
+    - Gere uma amostra aleatória $X_1^{(j)}, \dots, X_n^{(j)}$;
+    - Determine o intervalo de confiança $C_j$;
+    - Defina $y_j = I(\theta \in C_j)$.
+2. Calcule o nível empírico de confiança usando $\bar{y}$.
+
+## Nível de Confiança - IC Variância {.build}
+
+$$X_1, \dots, X_n \sim N(\mu, \sigma^2)$$
+
+Qual é a quantidade pivotal para $\sigma^2$?
+
+$$V = \frac{(n-1)S^2}{\sigma^2} \sim \chi^2_{n-1}$$
+
+Qual é o IC ($1-\alpha$) unilateral para a variância?
+
+$$\left[ 0, \frac{(n-1)S^2}{\chi^2_{n-1}(\alpha)} \right]$$
+
+## Nível de Confiança - IC Variância
+
+Então, se $\mu=0, \sigma=2, n=20, m=1000$ e $\alpha=0.05$, temos:
+
+```{r conf_level_ic}
+mu=0
+sigma=2
+n=20
+m=1000
+alpha=0.05
+upper = replicate(m, {
+    x = rnorm(n, mu, sigma)
+    (n-1)*var(x)/qchisq(alpha, n-1)
+})
+y = sigma^2 < upper
+(mean(y))
+```
+
+## Método de Monte Carlo para Estimar Erro Tipo I em um Teste de Hipóteses
+
+1. Para cada réplica $j=1, \dots, m$:
+    - Gere a $j$-ésima amostra a partir da distribuição de $H_0$;
+    - Determine a estatística do teste, $T_j$;
+    - Faça a decisão $I_j = 1$, se $H_0$ é rejeitada.
+2. Calcule a proporção de testes significantes.
+
+## MC em Testes de Hipótese - Erro Tipo I
+
+$$X_1, \dots, X_n \sim N(\mu, \sigma^2)$$
+
+Calcule o poder do teste para $H_0: \mu = 500$ vs. $H_1: \mu > 500$, quando $\alpha = 0.05$ e $\sigma=100$. Sob $H_0$: $$T^{*} = \frac{\bar{X}-500}{S/\sqrt{20}} \sim t_{19}$$
+
+## MC em Testes de Hipótese - Erro Tipo I
+
+```{r erro_tipo_i}
+mu0=500
+sigma=100
+n=20
+m=100000
+alpha=0.05
+tstat = replicate(m, {
+    x = rnorm(n, mu0, sigma)
+    (mean(x)-mu0)/(sd(x)/sqrt(n))
+})
+I = tstat > qt(1-alpha, n-1)
+mean(I)
+```
+
+## Método de Monte Carlo para Estimar Poder em um Teste de Hipóteses
+
+1. Selecione um valor $\theta_1$ sob $H_1$;
+2. Para cada réplica $j=1, \dots, m$:
+    - Gere a $j$-ésima amostra a partir da distribuição de $H_1$;
+    - Determine a estatística do teste, $T_j$;
+    - Faça a decisão $I_j = 1$, se $H_0$ é rejeitada.
+3. Calcule a proporção de testes significantes.
+
+
+## MC em Testes de Hipótese - Poder
+
+$$X_1, \dots, X_n \sim N(\mu, \sigma^2)$$
+
+Calcule o poder do teste para $H_0: \mu = 500$ vs. $H_1: \mu > 500$, quando $\alpha = 0.05$ e $\sigma=100$. Sob $H_0$: $$T^{*} = \frac{\bar{X}-500}{S/\sqrt{20}} \sim t_{19}$$
+
+## MC em Testes de Hipótese - Poder
+
+```{r erro_poder, cache=TRUE}
+mu0=500
+mu1=seq(450, 650, 5)
+power = rep(NA, length(mu1))
+sigma=100
+n=20
+m=10000
+alpha=0.05
+for (i in 1:length(mu1)){
+    tstat = replicate(m, {
+        x = rnorm(n, mu1[i], sigma)
+        (mean(x)-mu0)/(sd(x)/sqrt(n))
+    })
+    power[i] = mean(tstat > qt(1-alpha, n-1))
+}
+err = sqrt(power*(1-power)/m)
+```
+
+## MC em Testes de Hipótese - Poder
+
+```{r erro_poder_plot}
+matplot(mu1, cbind(power-1.96*err, power, power+1.96*err), col=c(2, 1, 2),
+        type='l', xlab=expression(mu), ylab='Poder', lty=c(3, 1, 3))
+```
+
+## Referências
+
+Capítulo 6 - Maria Rizzo - Statistical Computing with R
 
