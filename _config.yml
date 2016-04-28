@@ -19,3 +19,5 @@ github_username:  estatcomp
 markdown: kramdown
 exclude: ['*.Rmd']
 
+encoding: UTF-8
+
