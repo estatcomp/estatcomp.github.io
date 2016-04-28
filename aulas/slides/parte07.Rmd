@@ -1,0 +1,138 @@
+---
+title: "Bootstrap"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+Sys.setlocale(locale='UTF-8')
+```
+
+## Introdução
+
+- Bootstrap foi introduzido em 1979 por Efron;
+- Estratégias de Bootstrap compõem uma classe de métodos não-paramétricos de Monte Carlo que estimam a distribuição de uma população por meio de reamostragem;
+- Métodos de reamostragem tratam amostras como uma população finita, a partir da qual reamostras são tomadas para estimar características e realizar inferências a respeito desta população;
+- Métodos de Bootstrap são habitualmente empregados quando a distribuição da população-alvo não é especificada.
+
+## Introdução
+
+Suponha que $x = (x_1, \dots, x_n)$ é uma amostra aleatória de uma distribuição $F_X$. Se $X^{*}$ é selecionado aleatóriamente de $x$, então:
+
+$$ P(X^{*}=x_i) = \frac{1}{n}.$$
+
+Reamostragem gera uma amostra aleatória $X^{*}_1, \dots, X^{*}_n$ por meio de amostragem com reposição. As variáveis aleatórias $X^{*}_i$ são iid e uniformimente distribuídas no conjunto $\{x_1, \dots, x_n\}$.
+
+## Introdução
+
+- Observe que a Função Empírica de Distribuição $F_n(x)$ é um estimador de $F_X(x)$;
+- Note que a distribuição de $X^{*}$ é $F_n(x)$;
+- Além disso, a Função Empírica de Distribuicão $F_n^{*}(x)$ é um estimador de $F_n(x)$;
+
+## Geração de Amostras Bootstrap
+
+Para gerar uma amostra boostrap aleatória por reamostragem de $x$, gere $n$ inteiros aleatórios uniformemente distribuídos no conjunto $\{1, \dots, n\}$ e selecione a amostra bootstrap como $x^{*} = (x_{i_1}, \dots, x_{i_n})$.
+
+## Geração de Amostras Bootstrap
+
+Suponha que $\theta$ seja o parâmetro de interesse (que pode ser vetorial) e que $\hat{\theta}$ seja um estimador de $\theta$. Então, a estimativa bootstrap da distribuição de $\hat{\theta}$ é obtida da seguinte maneira:
+
+1. Para a $b$-ésima replicata bootstrap, para a qual $b \in [1, B]$:
+    - Gere a amostra $x^{*(b)} = x^{*}_1, \dots, x^{*}_n$ por meio de reamostragem com reposição a partir de $x_1, \dots, x_n$ (a amostra observada);
+    - Determine o $b$-ésimo estimador (de bootstrap) $\hat{\theta}^{(b)}$;
+2. A estimativa de $F_{\hat{\theta}}(\cdot)$ é a distribuição empírica das réplicas $\hat{\theta}^{(1)}, \dots, \hat{\theta}^{(B)}$.
+
+## Exemplo
+
+Suponha que observamos os seguintes dados:
+
+$$ x = \{2, 2, 1, 1, 5, 4, 4, 3, 1, 2\}.$$
+
+Reamostrando de $x$, selecionamos $\{1, 2, 3, 4, 5\}$ com probabilidades $\{0.3, 0.3, 0.1, 0.2, 0.1\}$. A distribuição $F_{X^{*}}(x)$ de uma amostra tomada aleatoriamente é exatamente a função $F_n(x)$:
+
+$$
+\begin{align}
+F_{X^{*}}(x) = F_n(x) =
+\begin{cases}
+0.0 & x < 1; \\
+0.3 & 1 \leq x < 2;\\
+0.6 & 2 \leq x < 3;\\
+0.7 & 3 \leq x < 4;\\
+0.9 & 4 \leq x < 5;\\
+1.0 & x \geq 5.
+\end{cases}
+\end{align}
+$$
+
+## Estimação por Bootstrap do Erro-Padrão
+
+A estimativa bootstrap do erro-padrão de um estimador $\hat{\theta}$ é o erro-padrão amostral das replicatas bootstrap $\hat{\theta}^{(1)}, \dots, \hat{\theta}^{(B)}$:
+
+$$ \mbox{se}\left(\hat{\theta}^{*}\right) = \sqrt{ \frac{1}{B-1} \sum_{b=1}^B \left( \hat{\theta}^{(b)} - \overline{\hat{\theta}^{*}} \right)^2}, $$
+
+$$\overline{\hat{\theta}^{*}} = \frac{1}{B}\sum_{b=1}^B \hat{\theta}^{(b)}. $$
+
+## Exemplo
+
+- O conjunto de dados `cars` apresenta duas variáveis:
+    1. `dist`: distância percorrida até a parada total;
+    2. `speed`: velocidade no início da frenagem.
+- Esta é uma amostra de `r nrow(cars)` veículos;
+- Estime a correlação entre `dist` e `speed` usando bootstrap;
+
+```{r plot_cars, fig.height=3.5, fig.width=3.5, fig.align='center', echo=FALSE}
+with(cars, plot(speed, dist, xlab='Velocidade no Início da Frenagem', ylab='Distância até Parada'))
+```
+
+## Exemplo
+
+Bootstrap "manual":
+
+```{r boot_manual}
+set.seed(1)
+B = 10000
+boot_corr = vector('numeric', B)
+for (b in 1:B){
+    indices = sample(nrow(cars), rep=TRUE)
+    boot_corr[b] = with(cars[indices,], cor(dist, speed))
+}
+(theta_star = mean(boot_corr))
+(se_theta_star = sd(boot_corr))
+```
+
+## Exemplo
+
+Bootstrap via pacote `boot`:
+
+```{r boot_pkg}
+set.seed(1)
+library(boot)
+res = boot(cars,
+           function(dd, i) with(dd[i,], cor(dist, speed)),
+           R=10000)
+```
+
+## Exemplo
+
+Bootstrap via pacote `boot`:
+
+```{r boot_pkg_res, echo=FALSE}
+res
+```
+
+## Estimativa Bootstrap do Vício
+
+A definição de vício é dada por:
+$$B(\hat{\theta}) = E ( \hat{\theta}) - \theta$$
+
+Deste modo, a estimativa bootstrap do vício é:
+$$\hat{B(\hat{\theta})} = \overline{\hat{\theta}^{*}} - \hat{\theta},$$
+
+expressão na qual $\overline{\hat{\theta}^{*}} = \frac{1}{B} \sum_{b=1}^B \hat{\theta}^{(b)}$ e $\hat{\theta}$ é a estimativa calculada utilizando a amostra original.
+
+## Exemplo
+
+No exemplo da correlação no conjunto de dados `cars`, a correlação no conjunto original é `r round(with(cars, cor(dist, speed)), 4)`. Determinamos a estimativa bootstrap como `r round(theta_star, 4)`. Desta maneira o vício é:
+
+```{r vicio_boot1}
+theta_star - with(cars, cor(dist, speed))
+```
