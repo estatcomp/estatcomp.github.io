@@ -1,0 +1,69 @@
+---
+title: "Testes de Permutação"
+author: "Benilton S Carvalho"
+output: ioslides_presentation
+---
+
+## Introdução
+
+- Testes de permutação são baseados em reamostragem;
+- Utiliza-se reamostragem *sem reposição*;
+- São aplicados para testes de hipóteses gerais:
+$$ X_1, \dots, X_n \sim F \;\;\; e \;\;\; Y_1, \dots, Y_m \sim G$$
+$$ H_0: F = G \;\;\;vs.\;\;\; H_1: F \neq G$$
+- Sob $H_0$, $X_1, \dots, X_n, Y_1, \dots, Y_m$ têm todas a mesma distribuição $F$;
+- Replicatas do teste de duas população são obtidas por reamostragem sem reposição;
+- Testes de permutação podem ser realizados para averiguação de independência, homogeneidade, testes para mais de 2 grupos, etc.
+
+## Distribuição da Permutação
+
+- Suponha que:
+    - $X_1, \dots, X_n \sim F_X$
+    - $Y_1, \dots, Y_m \sim F_Y$
+- Seja $Z$ o conjunto ordenado $\{X_1, \dots, X_n, Y_1, \dots, Y_m\}$ indexado pelos índices $\nu = \{1, \dots, n, n+1, \dots, n+m\} = \{1, \dots, N\}$
+- Sob $H_0$, a chance de selecionar $n$ elementos de $Z$ é
+$$ \frac{1}{\binom{N}{n}} = \frac{n!m!}{N!}$$
+
+## Distribuição da Permutação
+
+- Se $\hat{\theta}(X,Y) = \hat{\theta}(Z, \nu)$ é uma estatística, então
+$$P(\hat{\theta} \leq t) = E(\hat{\theta} \leq t) = \frac{1}{\binom{N}{n}} \sum_{j=1}^N I(\hat{\theta}^{(j) \leq t} \leq t)$$
+- Se $\hat{\theta}$ é utilizado para testar uma hipótese e valores grandes de $\hat{\theta}$ são significativos, então o teste de permutação rejeita a hipótese nula quando $\hat{\theta}$ é relativamente grande comparado à distribuição das réplicas de permutação.
+- O nível de significância alcançado (ASL) é:
+$$P(\hat{\theta}^{*} \geq \hat{\theta}) = \frac{1}{\binom{N}{n}} \sum_{j=1}^N I(\hat{\theta}^{(j)} \geq \hat{\theta})$$
+
+## Procedimento para Teste de Permutação
+
+1. Determine a estatística de interesse para a amostra em questão;
+2. Para cada réplica:
+    - Gere uma permutação aleatória;
+    - Determine a estatística de interesse para a permutação obtida;
+3. Se valores altos de $\hat{\theta}$ são evidência em favor da alternativa, então determine o ASL como:
+$$ \hat{p} = \frac{1+\#{\hat{\theta}^{(b)}}{B+1}}$$
+4. Rejeite $H_0$ se $\hat{p} \leq \alpha$.
+
+## Exemplo
+
+Peso ao nascimento de frangos de acordo com 2 dietas:
+
+```{r load_data}
+attach(chickwts)
+(x <- sort(as.vector(weight[feed == "soybean"])))
+(y <- sort(as.vector(weight[feed == "linseed"])))
+detach(chickwts)
+```
+
+## Implementação
+
+```{r run}
+R = 100
+z = c(x, y)
+K = length(z)
+reps = vector("numeric", R)
+t0 = t.test(x, y)$statistic
+for (i in 1:R){
+    k = sample(K, size=length(x), replace=FALSE)
+    reps[i] = t.test(z[k], z[-k])$statistic
+}
+(p <- mean(c(t0, reps) >= t0))
+```

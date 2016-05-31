@@ -1,5 +1,5 @@
 ---
-title: "Bootstrap"
+title: "Bootstrap e Jacknife"
 output: ioslides_presentation
 ---
 
@@ -136,3 +136,7 @@ No exemplo da correlação no conjunto de dados `cars`, a correlação no conjun
 ```{r vicio_boot1}
 theta_star - with(cars, cor(dist, speed))
 ```
+
+## Jacknife
+
+- Proposto em
