@@ -1,0 +1,116 @@
+---
+title: "Árvores de Decisão e Florestas Aleatórias"
+author: "Benilton"
+date: "07/06/2016"
+output: ioslides_presentation
+---
+
+```{r setup, message=FALSE, warning=FALSE, echo=FALSE, include=FALSE}
+library(printr)
+library(caret)
+library(reshape2)
+```
+
+## Árvores de Decisão
+
+A importância de árvores de decisão como proposta para classificadores deve-se a:
+
+1. Bons classificadores;
+2. Boas características para visualização;
+3. Regras do tipo "SE ... ENTÃO ...";
+4. Estas regras já, implicitamente, contemplam interações.
+
+## Exemplo Árvores de Decisão
+
+```{r iris, echo=FALSE}
+iris[sample(nrow(iris), 5),]
+```
+
+## Exemplo Árvores de Decisão
+
+```{r show_iris1, echo=FALSE}
+ggplot(iris, aes(Petal.Length, Petal.Width, colour=Species)) + geom_point() + theme_bw()
+```
+
+## Exemplo Árvores de Decisão
+
+```{r show_iris2, echo=FALSE}
+ggplot(iris, aes(Petal.Length, Sepal.Width, colour=Species)) + geom_point() + theme_bw()
+```
+
+## Ajustando uma Árvore no R
+
+```{r rpart1, message=FALSE, warning=FALSE, eval=FALSE}
+library(rpart)
+library(rattle)
+library(rpart.plot)
+fit = rpart(Species~., data=iris)
+fancyRpartPlot(fit)
+```
+
+## Ajustando uma Árvore no R
+
+```{r rpart2, message=FALSE, warning=FALSE, echo=FALSE}
+library(rpart)
+library(rattle)
+library(rpart.plot)
+fit = rpart(Species~., data=iris)
+fancyRpartPlot(fit, sub="")
+```
+
+## Tabela de Confusão
+
+```{r confusao}
+pred = predict(fit, type="class")
+tbl = table(predicao=pred, observado=iris$Species)
+knitr::kable(tbl)
+```
+
+
+## Tabela de Confusão
+
+```{r confusao2}
+knitr::kable(prop.table(tbl, margin=2), digits = 2)
+```
+
+## Florestas Aleatórias
+
+- Árvores podem não se generalizar bem;
+- Por isso, recomenda-se a poda de árvores como a ajustada anteriormente;
+- Esta técnica ajuda a evitar *overfitting*;
+- Alternativa: _Florestas Aleatórias_;
+
+## Sumário de Florestas Aleatórias
+
+- *Bagging*: obter reamostras das observações originais através de *bootstrapping* (ex.: 500 amostras por meio de sorteio com reposição);
+- *Boosting*: ajustar árvore para cada reamostra. Se, em uma dada reamostra, uma observação não for classificada corretamente, aumenta-se o peso desta observação em árvores futuras;
+- *Randomizing*: para cada nó de uma dada árvore, utilizam-se apenas (por exemplo, 5) variáveis dentre aquelas disponíveis. Estas variáveis são selecionadas aleatoriamente em cada nó.
+
+## Exemplo: Árvores Aleatórias
+
+```{r rf, message=FALSE, warning=FALSE}
+library(randomForest)
+fit2 = randomForest(Species~., data=iris)
+```
+
+## Tabela de Confusão: Floresta Aleatória
+
+```{r confusao3}
+pred2 = predict(fit2, type="class")
+tbl2 = table(predicao=pred2, observado=iris$Species)
+knitr::kable(tbl2)
+```
+
+## Importância de Variável
+
+A redução no Índice de Gini é a quantidade mais utilizada para averiguação da importância de uma variável dentro de uma floresta aleatória.
+
+```{r varimp}
+varImp(fit2)
+```
+
+## Importância de Variável
+
+```{r varimpplot}
+varImpPlot(fit2, main = "Importância de Variáveis - iris")
+```

@@ -14,4 +14,4 @@ As aulas dadas no curso encontram-se disponiveis abaixo:
 6. Parte 6 - [Metodos de Monte Carlo em Inferencia](slides/parte06.html)
 7. Parte 7 - [Bootstrap](slides/parte07.html)
 8. Parte 8 - [Testes de Permutacao](slides/parte08.html)
-
+9. Parte 9 - [Arvores de Decisao e Florestas Aleatorias](slides/parte09.html)
