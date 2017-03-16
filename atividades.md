@@ -6,7 +6,7 @@ permalink: /atividades/
 
 **Atividade 1**
 
-- Entrega: 13 / MAR / 2017 - 16h00.
+- Entrega: 22 / MAR / 2017 - 16h00.
 - Modo de entrega: uma única cópia (formato Rmd) enviada para benilton (arroba) unicamp (ponto) br.
 - Atribuição de nota: baseada no trabalho em grupo.
 - Questões:
@@ -14,7 +14,7 @@ permalink: /atividades/
 	- Grupo (turma inteira): Criação do mesmo treinamento em Português, em linguagem adequada para alunos de graduação.
 - Sugestão: utilizar o Github para centralização das atividades.
 
-**Atividade 2**
+**Atividade 2 - Sendo repensado**
 
 - Entrega: 20 / MAR / 2017 - 16h00.
 - Modo de entrega: uma única cópia (formato Rmd) enviada para benilton (arroba) unicamp (ponto) br.
