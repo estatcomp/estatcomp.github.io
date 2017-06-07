@@ -6,8 +6,9 @@ output: ioslides_presentation
 ## Introdução
 
 Métodos de Monte Carlo compõem uma parte significativa de métodos computacionais em Estatística. Anteriormente, discutimos Integração por Monte Carlo. Mas outras aplicações incluem estimação de:
+
 - parâmetros da distribuição amostral de uma estatística;
-- erros quadrados médios
+- erros quadrados médios;
 - percentis;
 - probabilidades de cobertura de intervalos de confiança;
 - poder de testes;
@@ -186,7 +187,7 @@ err = sqrt(power*(1-power)/m)
 
 ## MC em Testes de Hipótese - Poder
 
-```{r erro_poder_plot}
+```{r erro_poder_plot, warning=FALSE}
 matplot(mu1, cbind(power-1.96*err, power, power+1.96*err), col=c(2, 1, 2),
         type='l', xlab=expression(mu), ylab='Poder', lty=c(3, 1, 3))
 ```

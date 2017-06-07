@@ -1,0 +1,147 @@
+---
+title: "Algoritmo EM"
+author: "Benilton Carvalho"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Introdução
+
+O algoritmo de Esperança e Maximização (Algoritmo EM) é um procedimento iterativo para a determinação de um estimador de verossimilhança quando apenas um subconjunto das observações está disponível. O primeiro estudo formal desta teoria é apresentado em Dempster, Lair e Rubin (1977).
+
+## Introdução
+
+As aplicações atuais do algoritmo são inúmeras e sua base de funcionamento é:
+
+1. a estimação das observações faltantes (condicional a alguma estimativa dos parâmetros de interesse);
+2. atualização da estimativa do passo anterior, por meio de um processo de maximização.
+
+## Algoritmo EM
+
+Seja $X = (X_1, X_2, \dots, X_n)$ um conjunto de observações distribuídas de acordo com uma densidade $f_{X|\Theta}(x | \theta)$. Deseja-se obter uma estimativa de verossimilhança para $\Theta$. Assim,
+
+$$X_1, X_2, \dots, X_n \sim f_{X|\Theta}(x | \theta),$$
+
+e a log-verossimilhança associada é:
+
+$$l(\theta ; x) = \log f_{X|\Theta}(x_i | \theta).$$
+
+## Composição de observados e não-observados
+
+O Algoritmo EM é aplicado quando temos observações incompletas de $X$. Assume-se que $X$ é composto por:
+
+1. um conjunto **observado** de dados, denotado por $Y=(Y_1, Y_2, \dots, Y_k)$; e
+2. um conjunto **não-observado** (observações faltantes ou latentes), $Z=(Z_1, Z_2, \dots, Z_{n-k})$.
+3. Assim, $X=(Y, Z)$.
+
+## Verossimilhança Observada
+
+Então, a verossimilhança dos dados observados é
+
+$$l_{O} (\theta; Y) = \log \int f_{X|\Theta} (Y, z | \theta) dz.$$
+Problema: a integral pode ser difícil de ser determinada e pode não ter uma forma fechada. Pode-se, então, fazer a combinação de 2 passos:
+
+1. Com uma estimativa $\theta^{(i)}$, estimam-se as observações faltantes;
+2. Com as observações faltantes recém-estimadas, obtém-se uma atualização $\theta^{(i+1)}$.
+
+## Algoritmo EM
+
+Formalmente, a estimativa de $\Theta$ no $i$-ésimo passo é denotada por $\theta^{(i)}$ e os dois passos do Algoritmo EM são:
+
+1. **Passo E**: Determinar $Q(\theta | \theta^{(i)}) = E_{\theta^{(i)}} \left[l(\theta; X) | Y\right]$.
+2. **Passo M**: Maximizar $Q(\theta | \theta^{(i)})$ com respeito a $\theta$ e determinar $\theta^{(i+1)} = arg \max Q(\theta | \theta^{(i)})$.
+
+Repete-se o processo iterativamente até a convergência.
+
+## Exemplo Multinomial
+
+Observam-se 197 animais que distribuem-se, de acordo com uma distribuição multinomial, em quatro categorias. As probabilidades de cada categoria são:
+
+$$\left( \frac{1}{2} + \frac{\theta}{4}, \frac{1-\theta}{4}, \frac{1-\theta}{4}, \frac{\theta}{4}\right),$$
+
+para $\theta \in [0,1]$.
+
+As contagens em cada grupo são $Y=y=(125, 18, 20, 34)$.
+
+Qual é a densidade dos dados observados?
+
+## Exemplo Multinomial
+
+A densidade dos dados observados, $f_{Y | \Theta}(y|\theta)$, é:
+
+$$\frac{n!}{y_1!y_2!y_3!y_4!} \left( \frac{1}{2} + \frac{\theta}{4} \right)^{y_1} \left(\frac{1-\theta}{4}\right)^{y_2} \left(\frac{1-\theta}{4}\right)^{y_3} \left(\frac{\theta}{4}\right)^{y_4}.$$
+
+O parâmetro $\theta$ pode ser estimado pelo método padrão de maximização de função. A log-verossimilhança é proporcional a:
+
+$$l(\theta; y) = c + y_1 \log(2+\theta) + (y_2+y_3) \log(1-\theta) + y_4 \log(\theta).$$
+
+Assim:
+
+$$\frac{\partial l(\theta; y)}{\partial \theta} = 0 \mbox{ e } I(\theta) = -\frac{\partial^2 l(\theta; y)}{\partial \theta^2}.$$
+
+## Exemplo Multinomial (EM)
+
+Suponha que a primeira categoria do exemplo possa ser dividida em 2 sub-grupos, mas que possamos apenas observar a soma destas duas categorias. Neste caso, $y_{11}$ e $y_{12}$ são observações faltantes. Então:
+
+$$Y=y=(y_{11} + y_{12} = 125, y_2=18, y_3=20, y_5=34).$$
+Neste novo cenário, temos 5 categorias e assumimos as seguintes probabilidades para cada grupo:
+
+$$\left( \frac{1}{2}, \frac{\theta}{4}, \frac{1-\theta}{4}, \frac{1-\theta}{4}, \frac{\theta}{4}\right)$$
+
+## Exemplo Multinomial (EM)
+
+A verossimilhança dos dados completos é:
+
+$$\frac{n!}{y_{11}!y_{12}!y_2!y_3!y_4!} \left( \frac{1}{2} \right)^{y_{11}} \left(\frac{\theta}{4} \right)^{y_{12}} \left(\frac{1-\theta}{4}\right)^{y_2} \left(\frac{1-\theta}{4}\right)^{y_3} \left(\frac{\theta}{4}\right)^{y_4}$$
+
+A log-verossimilhança completa é proporcional a:
+
+$$ (y_{12} + y_4) \log (\theta) + (y_2+y_3) \log(1-\theta).$$
+
+Como $y_{12}$ não foi observado, então não podemos maximizar a log-verossimilhança diretamente.
+
+## Passo E
+
+Sejam $\theta^{(0)}$ um valor inicial para $\theta$ e
+
+$$ l(\theta; y) = (y_{12} + y_4) \log (\theta) + (y_2+y_3) \log(1-\theta),$$
+
+então
+
+$$Q(\theta | \theta^{(0)}) = E_{\theta^{(0)}} \left[ l(\theta, Y_{11}, Y_{12}, Y_2, Y_3, Y_4) | Y_1, Y_2, Y_3, Y_4 \right] = ?$$
+
+## Passo E
+
+Sejam $\theta^{(0)}$ um valor inicial para $\theta$ e
+
+$$ l(\theta; y) = (y_{12} + y_4) \log (\theta) + (y_2+y_3) \log(1-\theta),$$
+
+então
+
+$$Q(\theta | \theta^{(0)}) = E_{\theta^{(0)}} \left[ l(\theta, Y_{11}, Y_{12}, Y_2, Y_3, Y_4) | Y_1, Y_2, Y_3, Y_4 \right]$$
+
+$$Q(\theta | \theta^{(0)}) = \left(\frac{Y_1 \theta^{(0)}}{2+\theta^{(0)}} + y_4 \right) \log \theta + (y_2+y_3) \log (1-\theta)$$
+
+## Passo M
+
+Maximizar $Q(\theta | \theta^{(0)})$ com respeito a $\theta$:
+
+$$Q(\theta | \theta^{(0)}) = \left(\frac{Y_1 \theta^{(0)}}{2+\theta^{(0)}} + y_4 \right) \log \theta + (y_2+y_3) \log (1-\theta) = ?$$
+
+## Passo M
+
+Maximizar $Q(\theta | \theta^{(0)})$ com respeito a $\theta$:
+
+$$Q(\theta | \theta^{(0)}) = \left(\frac{Y_1 \theta^{(0)}}{2+\theta^{(0)}} + y_4 \right) \log \theta + (y_2+y_3) \log (1-\theta)$$
+
+O maximizador é:
+
+$$\theta^{(i)} = \frac{y_{12}^{(i)} + y_4}{y_{12}^{(i)} + y_2 + y_3 + y_4},$$
+onde $$y_{12}^{(i)} = \frac{y_1 \theta^{(i)}}{2+\theta^{(i)}}.$$
+
+## Tarefa
+
+Implementar o Algoritmo EM para o exemplo anterior.
