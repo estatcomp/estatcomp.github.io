@@ -1,7 +1,6 @@
 ---
 title: "Árvores de Decisão e Florestas Aleatórias"
-author: "Benilton"
-date: "07/06/2016"
+author: "Benilton S Carvalho"
 output: ioslides_presentation
 ---
 
