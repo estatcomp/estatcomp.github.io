@@ -1,0 +1,55 @@
+---
+title: 'Exercício'
+author: "Yasmine"
+output: html_document
+---
+
+Vamos calcular:
+$$
+\begin{aligned}
+Cov(e^{u},u),
+\end{aligned}
+$$
+onde u~Uniforme(0,1) e E(u)=$\frac{1}{2}$.
+
+Sabemos que
+$$
+\begin{aligned}
+Cov(X,Y)=E(XY)-E(X)E(Y),
+\end{aligned}
+$$ 
+
+logo
+
+$$
+\begin{aligned}
+Cov(e^{u},u)=E(ue^{u})-E(e^{u})E(u)
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+E(e^{u})=\int_{0}^{1} e^{u} du=e^{}-1
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+E(ue^{u})=\int_{0}^{1} ue^{u} du=1,
+\end{aligned}
+$$
+
+pois seja X~$f_{X}(x)$, $E(g(X))=\int g(x)f_{X}(x) dx$
+
+
+```{r, include=FALSE}
+cov=1-(1/2)*(exp(1)-1)
+```
+
+Concluímos então que:
+
+$$
+\begin{aligned}
+Cov(e^{u},u)=1-\frac{1}{2}(e^{}-1)= `r cov`
+\end{aligned}
+$$
